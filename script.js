@@ -1,4 +1,4 @@
-const repoURL = 'https://api.github.com/repos/gitporn69/123-server/contents/'; // Replace with your GitHub repo details
+const repoURL = 'https://api.github.com/repos/uploadscreenshots/123-server/contents/'; // Replace with your GitHub repo details
 
 async function fetchMedia() {
     try {
