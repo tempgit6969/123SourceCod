@@ -1,25 +1,33 @@
-const repoURL = 'https://api.github.com/repos/gitporn69/instaserver/contents/'; // Replace with your GitHub repo details
+const repoURLs = [
+    'https://api.github.com/repos/gitporn69/123-server/contents/',
+    'https://api.github.com/repos/gitporn69/123-BFS-server/contents/',
+    // Add more repos here
+];
 
 async function fetchMedia() {
     try {
-        const response = await fetch(repoURL);
-        const data = await response.json();
+        const responses = await Promise.all(repoURLs.map(url => fetch(url)));
+        const dataArrays = await Promise.all(responses.map(response => response.json()));
+
+        // Merge contents from all repositories
+        const allData = dataArrays.flat();
 
         const videoGalleryContent = document.querySelector(".video-gallery .contents");
         const imageGalleryContent = document.querySelector(".image-gallery .contents");
 
         // Filter and sort video files in descending order
-        const videoFiles = data
+        const videoFiles = allData
             .filter(file => file.name.endsWith('.mp4'))
             .sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }));
 
         // Filter and sort image files in descending order
-        const imageFiles = data
+        const imageFiles = allData
             .filter(file => file.name.endsWith('.jpg') || file.name.endsWith('.png') || file.name.endsWith('.heic'))
             .sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }));
 
         // Populate video gallery
         videoFiles.forEach(file => {
+            const shareButton = shareButtonFunction(file);
             const videocard = document.createElement("div");
             videocard.setAttribute("class", "video-card");
             videoGalleryContent.appendChild(videocard);
@@ -29,10 +37,12 @@ async function fetchMedia() {
             video.controls = true;
             video.src = file.download_url;
             videocard.appendChild(video);
+            videocard.appendChild(shareButton);
         });
 
         // Populate image gallery
         imageFiles.forEach(file => {
+            const shareButton = shareButtonFunction(file);
             const imagecard = document.createElement("div");
             imagecard.setAttribute("class", "image-card");
             imageGalleryContent.appendChild(imagecard);
@@ -44,16 +54,15 @@ async function fetchMedia() {
             img.alt = file.name;
             imagecard.appendChild(a);
             a.appendChild(img);
+            imagecard.appendChild(shareButton);
         });
 
-        // Ensure only one video plays at a time
+        // Pause other videos when one is played
         const videos = document.querySelectorAll('.video-player');
         videos.forEach(video => {
             video.addEventListener('play', () => {
                 videos.forEach(v => {
-                    if (v !== video) {
-                        v.pause();
-                    }
+                    if (v !== video) v.pause();
                 });
             });
         });
@@ -63,3 +72,41 @@ async function fetchMedia() {
 }
 
 fetchMedia();
+function shareButtonFunction(file) {
+    const shareButton = document.createElement('button');
+    shareButton.textContent = 'Share Link';
+
+    shareButton.onclick = async () => {
+        var urlInfo = extractGitHubInfo(file.download_url);
+        const link = `https://${urlInfo.username}.github.io/${urlInfo.repo}/${file.name}`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Check this out!',
+                    text: 'Here is a link for you from ১ ২ ৩:',
+                    url: link
+                });
+                console.log('Shared successfully');
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        } else {
+            // Fallback: Copy link to clipboard if sharing is not supported
+            navigator.clipboard.writeText(link);
+            alert('Sharing not supported, link copied to clipboard!');
+        }
+    };
+    return shareButton;
+}
+
+function extractGitHubInfo(url) {
+    const match = url.match(/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)/);
+    if (match) {
+        const username = match[1];
+        const repo = match[2];
+        return { username, repo };
+    }
+    return null;
+}
+
