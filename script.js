@@ -11,14 +11,14 @@ const repoURLs = [
     'https://api.github.com/repos/tempgit6969/123-server-10/contents/'
 ];
 
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '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';
 
 async function fetchMedia() {
     try {
         const responses = await Promise.all(repoURLs.map(url => 
             fetch(url, {
                 headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`
+                    'Authorization': `Bearer ${GITHUB_TOKEN}`
                 }
             })
         ));
