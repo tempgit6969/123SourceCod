@@ -11,17 +11,10 @@ const repoURLs = [
     'https://api.github.com/repos/tempgit6969/123-server-10/contents/'
 ];
 
-const GITHUB_TOKEN = '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';
 
 async function fetchMedia() {
     try {
-        const responses = await Promise.all(repoURLs.map(url => 
-            fetch(url, {
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`
-                }
-            })
-        ));
+        const responses = await Promise.all(repoURLs.map(url => fetch(url)));
         const dataArrays = await Promise.all(responses.map(response => response.json()));
 
         // Merge contents from all repositories
@@ -87,7 +80,6 @@ async function fetchMedia() {
 }
 
 fetchMedia();
-
 function shareButtonFunction(file) {
     const shareButton = document.createElement('button');
     shareButton.textContent = 'Share Link';
