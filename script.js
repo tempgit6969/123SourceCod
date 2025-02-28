@@ -1,8 +1,16 @@
 const repoURLs = [
-    'https://api.github.com/repos/gitporn69/123-server/contents/',
-    'https://api.github.com/repos/gitporn69/123-BFS-server/contents/',
-    // Add more repos here
+    'https://api.github.com/repos/tempgit6969/123-server-1/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-2/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-3/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-4/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-5/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-6/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-7/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-8/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-9/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-10/contents/'
 ];
+
 
 async function fetchMedia() {
     try {
