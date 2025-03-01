@@ -8,17 +8,27 @@ const repoURLs = [
     'https://api.github.com/repos/tempgit6969/123-server-7/contents/',
     'https://api.github.com/repos/tempgit6969/123-server-8/contents/',
     'https://api.github.com/repos/tempgit6969/123-server-9/contents/',
-    'https://api.github.com/repos/tempgit6969/123-server-10/contents/'
+    'https://api.github.com/repos/tempgit6969/123-server-10/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-11/contents/'
 ];
-
 
 async function fetchMedia() {
     try {
-        const responses = await Promise.all(repoURLs.map(url => fetch(url)));
-        const dataArrays = await Promise.all(responses.map(response => response.json()));
+        const responses = await Promise.all(
+            repoURLs.map(async url => {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(response.statusText);
+                    return await response.json();
+                } catch (error) {
+                    console.error(`Error fetching ${url}:`, error);
+                    return null; // Return null for failed requests
+                }
+            })
+        );
 
-        // Merge contents from all repositories
-        const allData = dataArrays.flat();
+        // Merge contents from valid responses only
+        const allData = responses.filter(data => data !== null).flat();
 
         const videoGalleryContent = document.querySelector(".video-gallery .contents");
         const imageGalleryContent = document.querySelector(".image-gallery .contents");
@@ -75,11 +85,12 @@ async function fetchMedia() {
             });
         });
     } catch (error) {
-        console.error('Error fetching media:', error);
+        console.error('Unexpected error fetching media:', error);
     }
 }
 
 fetchMedia();
+
 function shareButtonFunction(file) {
     const shareButton = document.createElement('button');
     shareButton.textContent = 'Share Link';
