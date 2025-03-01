@@ -27,23 +27,19 @@ async function fetchMedia() {
             })
         );
 
-        // Merge contents from valid responses only
         const allData = responses.filter(data => data !== null).flat();
 
         const videoGalleryContent = document.querySelector(".video-gallery .contents");
         const imageGalleryContent = document.querySelector(".image-gallery .contents");
 
-        // Filter and sort video files in descending order
         const videoFiles = allData
             .filter(file => file.name.endsWith('.mp4'))
             .sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }));
 
-        // Filter and sort image files in descending order
         const imageFiles = allData
             .filter(file => file.name.endsWith('.jpg') || file.name.endsWith('.png') || file.name.endsWith('.heic'))
             .sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }));
 
-        // Populate video gallery
         videoFiles.forEach(file => {
             const shareButton = shareButtonFunction(file);
             const videocard = document.createElement("div");
@@ -53,12 +49,20 @@ async function fetchMedia() {
             const video = document.createElement('video');
             video.setAttribute("class", "video-player");
             video.controls = true;
+            video.preload = "metadata"; // Only loads metadata initially
             video.src = file.download_url;
+
             videocard.appendChild(video);
             videocard.appendChild(shareButton);
+
+            video.addEventListener('play', () => {
+                if (!video.getAttribute("data-loaded")) {
+                    video.setAttribute("data-loaded", "true");
+                    video.src = file.download_url; // Load full video when played
+                }
+            });
         });
 
-        // Populate image gallery
         imageFiles.forEach(file => {
             const shareButton = shareButtonFunction(file);
             const imagecard = document.createElement("div");
@@ -75,7 +79,6 @@ async function fetchMedia() {
             imagecard.appendChild(shareButton);
         });
 
-        // Pause other videos when one is played
         const videos = document.querySelectorAll('.video-player');
         videos.forEach(video => {
             video.addEventListener('play', () => {
@@ -111,7 +114,6 @@ function shareButtonFunction(file) {
                 console.error('Error sharing:', error);
             }
         } else {
-            // Fallback: Copy link to clipboard if sharing is not supported
             navigator.clipboard.writeText(link);
             alert('Sharing not supported, link copied to clipboard!');
         }
