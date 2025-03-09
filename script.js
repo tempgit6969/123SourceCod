@@ -9,7 +9,9 @@ const repoURLs = [
     'https://api.github.com/repos/tempgit6969/123-server-8/contents/',
     'https://api.github.com/repos/tempgit6969/123-server-9/contents/',
     'https://api.github.com/repos/tempgit6969/123-server-10/contents/',
-    'https://api.github.com/repos/tempgit6969/123-server-11/contents/'
+    'https://api.github.com/repos/tempgit6969/123-server-11/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-12/contents/',
+    'https://api.github.com/repos/tempgit6969/123-server-13/contents/'
 ];
 
 async function fetchMedia() {
